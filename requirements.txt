@@ -1,0 +1,10 @@
+torch>=2.0.0
+transformers
+datasets
+accelerate
+numpy
+matplotlib
+tqdm
+scikit-learn
+sentencepiece
+
