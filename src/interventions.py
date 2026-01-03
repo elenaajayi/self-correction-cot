@@ -4,6 +4,7 @@ from typing import Dict, List
 
 import numpy as np
 import torch
+from tqdm import tqdm
 
 import config
 from .correction import measure_correction, classify_correction_type
@@ -68,7 +69,7 @@ def run_ablation_experiment(model, tokenizer, edited_examples: List[Dict], corre
     for strength in strengths:
         corrections = 0
         total = 0
-        for ex in edited_examples:
+        for ex in tqdm(edited_examples, desc=f"Ablation strength {strength}", leave=False):
             problem = ex.get("problem")
             edited_prefix = ex.get("edited_prefix")
             original_continuation = ex.get("original_continuation", "")
