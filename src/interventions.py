@@ -23,16 +23,18 @@ def generate_with_ablation(model, tokenizer, prompt: str, direction: np.ndarray,
     layers = _get_layers(model)
     target_layer = layers[layer_idx]
 
-    direction_tensor = torch.tensor(direction, dtype=torch.float32, device=model.device)
+    direction_tensor = torch.tensor(direction, dtype=torch.float16, device=model.device)
     direction_tensor = direction_tensor / (torch.linalg.norm(direction_tensor) + 1e-8)
 
     pad_token_id = tokenizer.pad_token_id or tokenizer.eos_token_id
 
     def hook_fn(module, inputs, output):
         hidden = output[0] if isinstance(output, tuple) else output
+        # Match direction dtype to hidden dtype to avoid type mismatch
+        dir_t = direction_tensor.to(hidden.dtype)
         # projection shape: [batch, seq]
-        projection = torch.matmul(hidden, direction_tensor)
-        hidden = hidden - strength * projection.unsqueeze(-1) * direction_tensor
+        projection = torch.matmul(hidden, dir_t)
+        hidden = hidden - strength * projection.unsqueeze(-1) * dir_t
         if isinstance(output, tuple):
             return (hidden,) + output[1:]
         return hidden
