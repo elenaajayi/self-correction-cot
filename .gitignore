@@ -13,10 +13,7 @@ env/
 .ipynb_checkpoints/
 
 # Data and outputs
-results.json
-mechanistic_results.json
 results_checkpoint.json
-plots/
 
 # Hugging Face cache (optional; remove if you want to keep locally)
 hf_cache/
